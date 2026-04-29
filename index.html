@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>維²家の幸福 · 水餃專賣店</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --mt-50:#fdf8f3;--mt-100:#f7eee3;--mt-200:#eeddd0;--mt-300:#dfc4a8;
+  --mt-400:#c9a07a;--mt-500:#b8845a;--mt-600:#9c6b44;--mt-700:#7d5234;
+  --mt-800:#5e3c26;--mt-900:#3d2618;
+  --sage:#a8b5a0;--rose:#c9a9a6;--lav:#b4a8c4;--green:#8fa899;--warm:#c4a882;
+  --tp:#3d2618;--ts:#7d5234;--tm:#9c8070;--tl:#c9b5a0;
+  --bg:#fdf8f3;--card:#fff9f4;--bdr:#e8d8c8;--bdrl:#f0e5d8;
+  --ok:#7aab82;--warn:#d4a054;--err:#c47070;--info:#7a9ab4;
+  --sh1:0 1px 3px rgba(93,58,38,.06);--sh2:0 4px 12px rgba(93,58,38,.10);--sh3:0 8px 24px rgba(93,58,38,.14);
+  --r1:10px;--r2:16px;--r3:22px;--nav:64px;--top:56px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--tp);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow:hidden}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--mt-300);border-radius:10px}
+
+/* AUTH */
+#auth-screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#f7eee3 0%,#e8d4bc 50%,#dfc4a8 100%);z-index:9999}
+.aw{width:88%;max-width:380px}
+.alo{text-align:center;margin-bottom:28px}
+.alo-icon{width:68px;height:68px;background:var(--mt-500);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 12px;box-shadow:0 8px 24px rgba(184,132,90,.35)}
+.alo-name{font-family:'Noto Serif TC',serif;font-size:22px;font-weight:700;color:var(--mt-800);letter-spacing:.05em}
+.alo-sub{font-size:12px;color:var(--tm);letter-spacing:.12em;margin-top:3px}
+.ac{background:rgba(255,249,244,.95);backdrop-filter:blur(20px);border-radius:var(--r3);padding:26px 22px 30px;box-shadow:var(--sh3),0 0 0 1px rgba(232,216,200,.5)}
+.ac h2{font-family:'Noto Serif TC',serif;font-size:17px;color:var(--ts);margin-bottom:18px;text-align:center;font-weight:500}
+.aerr{background:#fde8e8;border:1px solid #e8c0c0;color:var(--err);padding:10px 14px;border-radius:var(--r1);font-size:13px;margin-bottom:14px;display:none}
+
+/* FORMS */
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:12px;color:var(--tm);margin-bottom:5px}
+input,select,textarea{width:100%;padding:12px 14px;border:1.5px solid var(--bdr);border-radius:var(--r1);background:var(--bg);color:var(--tp);font-family:inherit;font-size:15px;outline:none;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--mt-400);box-shadow:0 0 0 3px rgba(184,132,90,.12)}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239c8070' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+textarea{resize:vertical;min-height:80px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px 20px;border:none;border-radius:var(--r1);font-family:inherit;font-size:15px;font-weight:500;cursor:pointer;transition:all .2s}
+.bp{background:var(--mt-500);color:#fff;box-shadow:0 2px 8px rgba(184,132,90,.3)}.bp:active{background:var(--mt-600);transform:scale(.98)}
+.bs{background:var(--mt-100);color:var(--ts);border:1.5px solid var(--bdr)}.bs:active{background:var(--mt-200)}
+.bd{background:#fde8e8;color:var(--err);border:1.5px solid #e8c8c8}
+.bsm{padding:8px 14px;font-size:13px;border-radius:8px}
+.bfl{width:100%}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* APP */
+#app{display:none;height:100vh;flex-direction:column}
+#app.visible{display:flex}
+.topbar{height:var(--top);background:var(--card);border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0;box-shadow:var(--sh1)}
+.tb-brand{font-family:'Noto Serif TC',serif;font-size:15px;font-weight:700;color:var(--mt-700);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb-user{font-size:12px;color:var(--tm)}
+.logout-btn{padding:6px 12px;border-radius:8px;background:var(--mt-100);color:var(--ts);border:1px solid var(--bdr);font-size:12px;font-family:inherit;cursor:pointer}
+
+/* CONTENT */
+.cwrap{flex:1;overflow:hidden;position:relative}
+.cscroll{height:100%;overflow-y:auto;overflow-x:hidden;padding:16px 14px calc(var(--nav) + 20px);-webkit-overflow-scrolling:touch}
+
+/* BOTTOM NAV */
+.bnav{position:fixed;bottom:0;left:0;right:0;height:var(--nav);background:var(--card);border-top:1px solid var(--bdr);display:flex;align-items:stretch;box-shadow:0 -4px 20px rgba(93,58,38,.08);z-index:200;padding-bottom:env(safe-area-inset-bottom)}
+.ntab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:var(--tl);transition:color .2s;padding:6px 0;position:relative;border:none;background:none;font-family:inherit}
+.ntab.active{color:var(--mt-600)}
+.ntab.active::before{content:'';position:absolute;top:0;left:20%;right:20%;height:2.5px;background:var(--mt-500);border-radius:0 0 3px 3px}
+.ni{font-size:20px;line-height:1}
+.nl{font-size:10px;font-weight:500}
+
+/* MORE OVERLAY */
+.more-bg{position:fixed;inset:0;background:rgba(61,38,24,.3);z-index:500;display:none}
+.more-bg.open{display:block}
+.more-panel{position:fixed;bottom:var(--nav);left:0;right:0;background:var(--card);border-top:1px solid var(--bdr);border-radius:var(--r3) var(--r3) 0 0;padding:18px 16px;z-index:501;transform:translateY(100%);transition:transform .3s ease}
+.more-bg.open .more-panel{transform:translateY(0)}
+.mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.mi{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 4px;border-radius:var(--r2);background:var(--mt-50);border:1px solid var(--bdrl);cursor:pointer;transition:all .2s;border:none}
+.mi:active{background:var(--mt-200)}
+.mi-ico{font-size:22px}
+.mi-lbl{font-size:11px;color:var(--ts);text-align:center;font-weight:500}
+
+/* PAGES */
+.page{display:none}.page.active{display:block}
+.ph{margin-bottom:16px}
+.ph-title{font-family:'Noto Serif TC',serif;font-size:22px;font-weight:700;color:var(--tp)}
+.ph-sub{font-size:13px;color:var(--tm);margin-top:2px}
+
+/* PERIOD BAR */
+.pbar{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--bdr);border-radius:var(--r2);padding:12px 16px;margin-bottom:16px}
+.pbar select{border:none;background:transparent;font-size:15px;font-weight:600;color:var(--ts);padding:0;width:auto;cursor:pointer}
+.psep{color:var(--tl);font-size:13px}
+
+/* STATS */
+.sgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+.sc{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r2);padding:16px 14px;text-align:center}
+.sl{font-size:11px;color:var(--tm);margin-bottom:4px}
+.sv{font-family:'Noto Serif TC',serif;font-size:24px;font-weight:700;color:var(--mt-600)}
+.su{font-size:12px;color:var(--tm)}
+.str{font-size:11px;margin-top:2px}
+.up{color:var(--ok)}.dn{color:var(--err)}
+
+/* CARDS */
+.rlist{display:flex;flex-direction:column;gap:10px}
+.rc{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r2);padding:14px 16px;display:flex;align-items:center;gap:12px}
+.rci{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.ri-rev{background:#fef0e4}.ri-pa{background:#e4ede8}.ri-pb{background:#ece8f4}.ri-st{background:#e8f0f6}
+.rcb{flex:1;min-width:0}
+.rct{font-size:14px;font-weight:600;color:var(--tp);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rcs{font-size:12px;color:var(--tm);margin-top:1px}
+.rcr{text-align:right;flex-shrink:0}
+.rca{font-family:'Noto Serif TC',serif;font-size:16px;font-weight:700;color:var(--mt-600)}
+.rcd{font-size:11px;color:var(--tl);margin-top:2px}
+.rdel{padding:6px 10px;border-radius:8px;background:#fde8e8;color:var(--err);border:none;font-size:12px;cursor:pointer;font-family:inherit;flex-shrink:0}
+
+/* CARD BLOCK */
+.card{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r2);padding:16px;margin-bottom:14px}
+.ctitle{font-family:'Noto Serif TC',serif;font-size:15px;font-weight:600;color:var(--ts);margin-bottom:14px}
+
+/* SUMMARY */
+.stot{background:linear-gradient(135deg,var(--mt-100),var(--mt-200));border:1px solid var(--mt-300);border-radius:var(--r2);padding:18px 16px;margin-top:12px;text-align:center}
+.slbl{font-size:12px;color:var(--tm);margin-bottom:4px}
+.sval{font-family:'Noto Serif TC',serif;font-size:28px;font-weight:700;color:var(--mt-700)}
+.sval.pos{color:var(--ok)}.sval.neg{color:var(--err)}
+
+/* FAB */
+.fab{position:fixed;right:18px;bottom:calc(var(--nav) + 14px);width:56px;height:56px;border-radius:50%;background:var(--mt-500);color:#fff;border:none;font-size:26px;cursor:pointer;box-shadow:0 4px 16px rgba(184,132,90,.45);display:flex;align-items:center;justify-content:center;transition:transform .2s;z-index:150}
+.fab:active{transform:scale(.9)}
+.fab.hidden{display:none}
+
+/* MODAL */
+.mover{position:fixed;inset:0;background:rgba(61,38,24,.4);z-index:1000;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .3s}
+.mover.open{opacity:1;pointer-events:all}
+.modal{background:var(--card);border-radius:var(--r3) var(--r3) 0 0;padding:8px 20px calc(32px + env(safe-area-inset-bottom));width:100%;max-height:92vh;overflow-y:auto;transform:translateY(100%);transition:transform .3s ease}
+.mover.open .modal{transform:translateY(0)}
+.mhnd{width:36px;height:3px;background:var(--bdr);border-radius:3px;margin:0 auto 18px}
+.mtit{font-family:'Noto Serif TC',serif;font-size:18px;font-weight:600;color:var(--tp);margin-bottom:18px}
+.mftr{display:flex;gap:10px;margin-top:18px}
+
+/* DETAIL ROW */
+.dr{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--bdrl)}
+.dr:last-child{border-bottom:none}
+.drl{font-size:14px;color:var(--tm)}.drv{font-size:14px;font-weight:600;color:var(--tp)}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.ba{background:#e4ede8;color:#3d6b50}.bb{background:#ece8f4;color:#5a3d8a}
+.bg{background:#e8f4ea;color:#3d7a50}.bw{background:#fef4e4;color:#8a5a20}.be{background:#fde8e8;color:#8a2020}
+
+/* PROGRESS */
+.pw{background:var(--bdrl);border-radius:10px;height:8px;overflow:hidden;margin-top:6px}
+.pb{height:100%;border-radius:10px;transition:width .6s}
+.po{background:var(--sage)}.pw2{background:var(--warm)}.pe{background:var(--rose)}
+
+/* RATIO */
+.rit{margin-bottom:16px}
+.rih{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;font-size:13px}
+.ril{color:var(--ts)}.rir{display:flex;align-items:center;gap:6px}
+.rip{font-weight:700;color:var(--tp)}.rihint{font-size:10px;color:var(--tl);margin-top:3px}
+
+/* OVERVIEW */
+.omc{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r2);padding:16px;margin-bottom:10px;cursor:pointer;transition:all .2s}
+.omc:active{border-color:var(--mt-300);box-shadow:var(--sh1)}
+.omct{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.omcm{font-weight:700;color:var(--ts);font-size:15px}
+.omcr{font-family:'Noto Serif TC',serif;font-size:20px;color:var(--mt-600);font-weight:700}
+.omcb{display:flex;justify-content:space-between;font-size:12px;color:var(--tm)}
+.omcc{font-weight:700;color:var(--mt-600)}
+
+/* YEAR TABS */
+.ytabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px}
+.ytab{padding:8px 18px;border-radius:20px;font-size:14px;cursor:pointer;border:1.5px solid var(--bdr);background:var(--card);color:var(--ts);white-space:nowrap;flex-shrink:0;transition:all .2s;font-family:inherit}
+.ytab.active{background:var(--mt-500);border-color:var(--mt-500);color:#fff;font-weight:600}
+
+/* BAR CHART */
+.bchart{height:80px;display:flex;gap:3px;align-items:flex-end;margin:12px 0 4px}
+.bw{flex:1;display:flex;gap:1px;align-items:flex-end;height:100%}
+.bar{flex:1;border-radius:3px 3px 0 0;min-height:3px;transition:height .5s}
+.blbls{display:flex;font-size:9px;color:var(--tl);margin-top:4px}
+.blbls span{flex:1;text-align:center}
+
+/* MISC */
+.ssep{display:flex;align-items:center;gap:10px;margin:18px 0 12px}
+.ssep-line{flex:1;height:1px;background:var(--bdr)}
+.ssep-text{font-size:11px;color:var(--tl);letter-spacing:.1em;white-space:nowrap}
+hr.div{border:none;border-top:1px solid var(--bdr);margin:14px 0}
+.empty{text-align:center;padding:36px 20px;color:var(--tm)}
+.empty-ico{font-size:38px;margin-bottom:8px}
+.loading{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--tm);gap:10px;font-size:13px}
+.spin{width:18px;height:18px;border:2px solid var(--bdr);border-top-color:var(--mt-400);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.alert{padding:12px 14px;border-radius:var(--r1);font-size:13px;margin-bottom:12px}
+.aok{background:#e8f4ea;color:var(--ok);border:1px solid #b8dac0}
+.awk{background:#fef4e4;color:var(--warn);border:1px solid #e8d4a8}
+.aer{background:#fde8e8;color:var(--err);border:1px solid #e8c0c0}
+.vhd{background:var(--mt-50);padding:10px 14px;border-radius:var(--r1);font-size:13px;font-weight:700;color:var(--ts);display:flex;justify-content:space-between;margin-bottom:8px;border:1px solid var(--bdrl)}
+.exp-row{display:flex;gap:8px;align-items:flex-end;margin-bottom:12px}
+.exp-row .fg{flex:1;margin:0}
+.exp-del{padding:12px;border-radius:var(--r1);background:#fde8e8;color:var(--err);border:none;cursor:pointer;font-size:14px}
+#toast{position:fixed;bottom:calc(var(--nav) + 16px);left:50%;transform:translateX(-50%) translateY(40px);background:var(--mt-800);color:#fff;padding:10px 22px;border-radius:20px;font-size:14px;z-index:9999;transition:transform .3s,opacity .3s;opacity:0;pointer-events:none;white-space:nowrap;max-width:88vw}
+#toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+</style>
+</head>
+<body>
+
+<!-- AUTH -->
+<div id="auth-screen">
+  <div class="aw">
+    <div class="alo">
+      <div class="alo-icon">🥟</div>
+      <div class="alo-name">維²家の幸福</div>
+      <div class="alo-sub">水餃專賣店 · 營運管理系統</div>
+    </div>
+    <div class="ac">
+      <h2>登入帳戶</h2>
+      <div class="aerr" id="auth-err"></div>
+      <div class="fg"><label>電子郵件</label><input type="email" id="login-email" placeholder="輸入電子郵件" autocomplete="email"></div>
+      <div class="fg"><label>密碼</label><input type="password" id="login-password" placeholder="輸入密碼"></div>
+      <button class="btn bp bfl" id="login-btn" onclick="doLogin()">登入</button>
+      <div style="text-align:center;margin-top:12px;font-size:12px;color:var(--tm)">系統創作：小花 siaohua2025</div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <div class="tb-brand">維²家の幸福 · 水餃專賣店</div>
+    <div class="tb-user" id="user-short"></div>
+    <button class="logout-btn" onclick="doLogout()">登出</button>
+  </div>
+  <div class="cwrap">
+    <div class="cscroll" id="cscroll">
+
+      <!-- OVERVIEW -->
+      <div class="page active" id="page-overview">
+        <div class="ph"><div class="ph-title">月度總覽</div><div class="ph-sub">查看每月營運概況</div></div>
+        <div class="pbar"><span style="font-size:13px;color:var(--tm)">查看年份</span><select id="ov-year" onchange="loadOverview()"></select><span class="psep">年</span></div>
+        <div id="ov-content"><div class="loading"><div class="spin"></div>載入中…</div></div>
+      </div>
+
+      <!-- REVENUE -->
+      <div class="page" id="page-revenue">
+        <div class="ph"><div class="ph-title">每日營業額</div><div class="ph-sub">記錄每日單號與營業金額</div></div>
+        <div class="pbar">
+          <select id="rv-year" onchange="loadRevenue()"></select><span class="psep">年</span>
+          <select id="rv-month" onchange="loadRevenue()"></select><span class="psep">月</span>
+        </div>
+        <div class="sgrid">
+          <div class="sc"><div class="sl">本月營業額</div><div class="sv" id="rv-total">$0</div></div>
+          <div class="sc"><div class="sl">工作天數</div><div class="sv" id="rv-days">0</div><div class="su">天</div></div>
+          <div class="sc"><div class="sl">日均營業額</div><div class="sv" id="rv-avg">$0</div></div>
+          <div class="sc"><div class="sl">筆數</div><div class="sv" id="rv-count">0</div><div class="su">筆</div></div>
+        </div>
+        <div class="ssep"><div class="ssep-line"></div><div class="ssep-text">營業記錄</div><div class="ssep-line"></div></div>
+        <div class="rlist" id="rv-list"><div class="empty"><div class="empty-ico">📝</div><div>尚無記錄</div></div></div>
+      </div>
+
+      <!-- PURCHASE -->
+      <div class="page" id="page-purchase">
+        <div class="ph"><div class="ph-title">進貨紀錄</div><div class="ph-sub">A食材 / B耗材 進貨管理</div></div>
+        <div class="pbar">
+          <select id="pu-year" onchange="loadPurchase()"></select><span class="psep">年</span>
+          <select id="pu-month" onchange="loadPurchase()"></select><span class="psep">月</span>
+        </div>
+        <div class="sgrid">
+          <div class="sc"><div class="sl" style="color:var(--sage)">A 食材合計</div><div class="sv" id="pu-a">$0</div></div>
+          <div class="sc"><div class="sl" style="color:var(--lav)">B 耗材合計</div><div class="sv" id="pu-b">$0</div></div>
+        </div>
+        <div class="stot" style="margin-bottom:14px"><div class="slbl">A + B 進貨總計</div><div class="sval" id="pu-ab" style="font-size:24px">$0</div></div>
+        <div class="card">
+          <div class="ctitle">📦 食材實際消耗成本</div>
+          <div style="font-size:12px;color:var(--tm);margin-bottom:12px">本月A食材 + 上月底庫存 − 本月底庫存</div>
+          <div class="fg"><label>上月底庫存金額 $</label><input type="number" id="prev-stock" placeholder="0" inputmode="numeric" oninput="calcFood()"></div>
+          <div class="fg"><label>本月底庫存金額 $</label><input type="number" id="curr-stock" placeholder="0" inputmode="numeric" oninput="calcFood()"></div>
+          <button class="btn bp bsm" onclick="saveStock()">儲存庫存</button>
+          <div class="stot" style="margin-top:12px"><div class="slbl">本月實際消耗成本</div><div class="sval" id="food-cost" style="font-size:20px">$0</div></div>
+        </div>
+        <div class="ssep"><div class="ssep-line"></div><div class="ssep-text">進貨明細</div><div class="ssep-line"></div></div>
+        <div class="rlist" id="pu-list"><div class="empty"><div class="empty-ico">🛒</div><div>尚無記錄</div></div></div>
+      </div>
+
+      <!-- STAFF -->
+      <div class="page" id="page-staff">
+        <div class="ph"><div class="ph-title">人事管理</div><div class="ph-sub">員工薪資計算</div></div>
+        <div class="pbar">
+          <select id="st-year" onchange="loadStaff()"></select><span class="psep">年</span>
+          <select id="st-month" onchange="loadStaff()"></select><span class="psep">月</span>
+        </div>
+        <div class="rlist" id="st-list"><div class="empty"><div class="empty-ico">👥</div><div>尚無員工</div></div></div>
+        <div class="stot"><div class="slbl">薪資總額</div><div class="sval" id="st-total">$0</div></div>
+      </div>
+
+      <!-- EXPENSE -->
+      <div class="page" id="page-expense">
+        <div class="ph"><div class="ph-title">月度支出</div><div class="ph-sub">費用管理與損益計算</div></div>
+        <div class="pbar">
+          <select id="ex-year" onchange="loadExpense()"></select><span class="psep">年</span>
+          <select id="ex-month" onchange="loadExpense()"></select><span class="psep">月</span>
+        </div>
+        <div class="card">
+          <div class="ctitle">📋 支出項目</div>
+          <div id="ex-items"></div>
+          <button class="btn bs bsm" onclick="addExpItem()">＋ 新增項目</button>
+          <hr class="div">
+          <button class="btn bp bfl" onclick="saveExpenses()">💾 儲存支出</button>
+        </div>
+        <div class="card">
+          <div class="ctitle">💹 損益計算</div>
+          <div class="dr"><span class="drl">本月總營業額</span><span class="drv" id="pl-rev">$0</span></div>
+          <div class="dr"><span class="drl">食材消耗成本</span><span class="drv" id="pl-food">$0</span></div>
+          <div class="dr"><span class="drl">人事薪資</span><span class="drv" id="pl-stf">$0</span></div>
+          <div id="pl-others"></div>
+          <hr class="div">
+          <div class="dr"><span class="drl" style="font-weight:700">總支出</span><span class="drv" style="color:var(--err)" id="pl-texp">$0</span></div>
+          <div class="stot"><div class="slbl">當月實賺金額</div><div class="sval" id="pl-net">$0</div></div>
+        </div>
+      </div>
+
+      <!-- ANALYSIS -->
+      <div class="page" id="page-analysis">
+        <div class="ph"><div class="ph-title">月報表分析</div><div class="ph-sub">成本佔比與營收狀況</div></div>
+        <div class="pbar">
+          <select id="an-year" onchange="loadAnalysis()"></select><span class="psep">年</span>
+          <select id="an-month" onchange="loadAnalysis()"></select><span class="psep">月</span>
+        </div>
+        <div id="an-content"><div class="loading"><div class="spin"></div>載入中…</div></div>
+      </div>
+
+      <!-- VENDOR -->
+      <div class="page" id="page-vendor">
+        <div class="ph"><div class="ph-title">廠商統計</div><div class="ph-sub">各廠商進貨金額彙整</div></div>
+        <div class="pbar">
+          <select id="vn-year" onchange="loadVendor()"></select><span class="psep">年</span>
+          <select id="vn-month" onchange="loadVendor()"></select><span class="psep">月</span>
+        </div>
+        <div id="vn-content"><div class="loading"><div class="spin"></div>載入中…</div></div>
+      </div>
+
+      <!-- YEARLY -->
+      <div class="page" id="page-yearly">
+        <div class="ph"><div class="ph-title">年度比較</div><div class="ph-sub">各月/各年度營收比較</div></div>
+        <div class="ytabs" id="yr-tabs"></div>
+        <div id="yr-content"><div class="loading"><div class="spin"></div>載入中…</div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FAB -->
+  <button class="fab hidden" id="fab-btn" onclick="openFab()">＋</button>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bnav">
+    <button class="ntab active" id="nav-overview" onclick="showPage('overview')"><div class="ni">🏠</div><div class="nl">總覽</div></button>
+    <button class="ntab" id="nav-revenue" onclick="showPage('revenue')"><div class="ni">💰</div><div class="nl">營業額</div></button>
+    <button class="ntab" id="nav-purchase" onclick="showPage('purchase')"><div class="ni">🛒</div><div class="nl">進貨</div></button>
+    <button class="ntab" id="nav-analysis" onclick="showPage('analysis')"><div class="ni">📊</div><div class="nl">報表</div></button>
+    <button class="ntab" id="nav-more" onclick="openMore()"><div class="ni">☰</div><div class="nl">更多</div></button>
+  </nav>
+</div>
+
+<!-- MORE MENU -->
+<div class="more-bg" id="more-bg" onclick="closeMore()">
+  <div class="more-panel" onclick="event.stopPropagation()">
+    <div style="font-size:13px;color:var(--tm);margin-bottom:14px;text-align:center;font-weight:500">更多功能</div>
+    <div class="mgrid">
+      <button class="mi" onclick="showPageMore('staff')"><div class="mi-ico">👥</div><div class="mi-lbl">人事管理</div></button>
+      <button class="mi" onclick="showPageMore('expense')"><div class="mi-ico">📋</div><div class="mi-lbl">月度支出</div></button>
+      <button class="mi" onclick="showPageMore('vendor')"><div class="mi-ico">📦</div><div class="mi-lbl">廠商統計</div></button>
+      <button class="mi" onclick="showPageMore('yearly')"><div class="mi-ico">📅</div><div class="mi-lbl">年度比較</div></button>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="mover" id="rv-modal">
+  <div class="modal">
+    <div class="mhnd"></div><div class="mtit">新增營業記錄</div>
+    <div class="fg"><label>日期</label><input type="date" id="rv-date"></div>
+    <div class="fg"><label>單號</label><input type="text" id="rv-order" placeholder="例：20240101-001"></div>
+    <div class="fg"><label>總營業額 $</label><input type="number" id="rv-amt" placeholder="0" inputmode="numeric"></div>
+    <div class="fg"><label>備註（選填）</label><input type="text" id="rv-note" placeholder="備註"></div>
+    <div class="mftr"><button class="btn bs bfl" onclick="closeModal('rv-modal')">取消</button><button class="btn bp bfl" onclick="saveRevenue()">儲存</button></div>
+  </div>
+</div>
+
+<div class="mover" id="pu-modal">
+  <div class="modal">
+    <div class="mhnd"></div><div class="mtit">新增進貨紀錄</div>
+    <div class="fg"><label>日期</label><input type="date" id="pu-date"></div>
+    <div class="fg"><label>類型</label><select id="pu-type" onchange="updatePurItems()"><option value="A">A - 食材</option><option value="B">B - 耗材</option></select></div>
+    <div class="fg"><label>廠商/項目</label><select id="pu-item-sel" onchange="checkPurOther()"></select></div>
+    <div class="fg" id="pu-other-grp" style="display:none"><label>自訂名稱</label><input type="text" id="pu-item-other" placeholder="輸入廠商或項目名稱"></div>
+    <div class="fg"><label>金額 $</label><input type="number" id="pu-amt" placeholder="0" inputmode="numeric"></div>
+    <div class="fg"><label>備註（選填）</label><input type="text" id="pu-note" placeholder="備註"></div>
+    <div class="mftr"><button class="btn bs bfl" onclick="closeModal('pu-modal')">取消</button><button class="btn bp bfl" onclick="savePurchase()">儲存</button></div>
+  </div>
+</div>
+
+<div class="mover" id="st-modal">
+  <div class="modal">
+    <div class="mhnd"></div><div class="mtit">新增員工薪資</div>
+    <div class="fg"><label>員工姓名</label><input type="text" id="st-name" placeholder="姓名"></div>
+    <div class="fg"><label>時薪 $</label><input type="number" id="st-hourly" placeholder="0" inputmode="numeric"></div>
+    <div class="fg"><label>工作時數</label><input type="number" id="st-hours" placeholder="0" step="0.5" inputmode="decimal"></div>
+    <div class="mftr"><button class="btn bs bfl" onclick="closeModal('st-modal')">取消</button><button class="btn bp bfl" onclick="saveStaff()">儲存</button></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import{getFirestore,collection,doc,addDoc,setDoc,getDoc,getDocs,deleteDoc,query,where,orderBy,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig={apiKey:"AIzaSyDBmdFAU8a6cQR8F_q0wFzd2LJkzabw9BA",authDomain:"wei2-dumpling-system.firebaseapp.com",projectId:"wei2-dumpling-system",storageBucket:"wei2-dumpling-system.firebasestorage.app",messagingSenderId:"550348939752",appId:"1:550348939752:web:c37863c57a75fc936a045d"};
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+
+let CU=null,expItems=[];
+const PA=['食材','其他'];
+const PB=['耗材','其他'];
+const EP=[{key:'rent',label:'租金'},{key:'telecom',label:'電信費'},{key:'electricity',label:'台電'},{key:'water',label:'水費'},{key:'misc',label:'其他'}];
+const today=()=>new Date().toISOString().split('T')[0];
+const ym=(y,m)=>`${y}-${String(m).padStart(2,'0')}`;
+const fmt=n=>'$'+Number(n||0).toLocaleString();
+const yrs=()=>{const y=new Date().getFullYear();return Array.from({length:5},(_,i)=>y-2+i);};
+
+window.showToast=(msg)=>{const t=document.getElementById('toast');t.textContent=msg;t.className='show';setTimeout(()=>t.className='',2800);};
+
+// AUTH
+window.doLogin=async()=>{
+  const email=document.getElementById('login-email').value.trim();
+  const pw=document.getElementById('login-password').value;
+  const err=document.getElementById('auth-err');
+  const btn=document.getElementById('login-btn');
+  err.style.display='none';btn.disabled=true;btn.textContent='登入中…';
+  try{await signInWithEmailAndPassword(auth,email,pw);}
+  catch(e){err.style.display='block';err.textContent='登入失敗：'+(e.code==='auth/invalid-credential'?'帳號或密碼錯誤':e.message);btn.disabled=false;btn.textContent='登入';}
+};
+window.doLogout=async()=>{await signOut(auth);};
+onAuthStateChanged(auth,u=>{
+  CU=u;
+  if(u){document.getElementById('auth-screen').style.display='none';document.getElementById('app').classList.add('visible');document.getElementById('user-short').textContent=u.email.split('@')[0];initApp();}
+  else{document.getElementById('auth-screen').style.display='flex';document.getElementById('app').classList.remove('visible');}
+});
+document.getElementById('login-password').addEventListener('keyup',e=>{if(e.key==='Enter')doLogin();});
+
+// INIT
+function initApp(){
+  const yr=yrs(),cy=new Date().getFullYear(),cm=new Date().getMonth()+1;
+  ['ov-year','rv-year','pu-year','st-year','ex-year','an-year','vn-year'].forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    el.innerHTML=yr.map(y=>`<option value="${y}"${y===cy?' selected':''}>${y}年</option>`).join('');
+  });
+  ['rv-month','pu-month','st-month','ex-month','an-month','vn-month'].forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    el.innerHTML=Array.from({length:12},(_,i)=>i+1).map(m=>`<option value="${m}"${m===cm?' selected':''}>${m}月</option>`).join('');
+  });
+  initYrTabs();showPage('overview');
+}
+
+// NAV
+window.showPage=(name)=>{
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+name)?.classList.add('active');
+  document.getElementById('nav-'+name)?.classList.add('active');
+  const fabPages=['revenue','purchase','staff'];
+  document.getElementById('fab-btn').classList.toggle('hidden',!fabPages.includes(name));
+  document.getElementById('cscroll').scrollTo(0,0);
+  const loads={overview:loadOverview,revenue:loadRevenue,purchase:loadPurchase,staff:loadStaff,expense:loadExpense,analysis:loadAnalysis,vendor:loadVendor,yearly:loadYearly};
+  loads[name]?.();
+};
+window.openMore=()=>document.getElementById('more-bg').classList.add('open');
+window.closeMore=()=>document.getElementById('more-bg').classList.remove('open');
+window.showPageMore=(name)=>{closeMore();showPage(name);};
+window.openFab=()=>{
+  const a=document.querySelector('.page.active')?.id.replace('page-','');
+  if(a==='revenue')openModal('rv-modal');
+  else if(a==='purchase')openModal('pu-modal');
+  else if(a==='staff')openModal('st-modal');
+};
+
+// MODALS
+window.openModal=(id)=>{
+  const t=today();
+  if(id==='rv-modal'){document.getElementById('rv-date').value=t;document.getElementById('rv-order').value='';document.getElementById('rv-amt').value='';document.getElementById('rv-note').value='';}
+  if(id==='pu-modal'){document.getElementById('pu-date').value=t;document.getElementById('pu-amt').value='';document.getElementById('pu-note').value='';updatePurItems();}
+  if(id==='st-modal'){document.getElementById('st-name').value='';document.getElementById('st-hourly').value='';document.getElementById('st-hours').value='';}
+  document.getElementById(id).classList.add('open');
+};
+window.closeModal=(id)=>document.getElementById(id).classList.remove('open');
+
+// DATA HELPERS
+const getRevTotal=async(y,m)=>{const q=query(collection(db,'users',CU.uid,'revenue'),where('year','==',y),where('month','==',m));const s=await getDocs(q);let t=0;s.forEach(d=>t+=d.data().amount||0);return t;};
+const getStfTotal=async(y,m)=>{const q=query(collection(db,'users',CU.uid,'staff'),where('year','==',y),where('month','==',m));const s=await getDocs(q);let t=0;s.forEach(d=>t+=d.data().salary||0);return t;};
+const getPurA=async(y,m)=>{const q=query(collection(db,'users',CU.uid,'purchase'),where('year','==',y),where('month','==',m),where('type','==','A'));const s=await getDocs(q);let t=0;s.forEach(d=>t+=d.data().amount||0);return t;};
+
+// REVENUE
+window.saveRevenue=async()=>{
+  const date=document.getElementById('rv-date').value;
+  const orderNo=document.getElementById('rv-order').value.trim();
+  const amount=parseFloat(document.getElementById('rv-amt').value)||0;
+  const note=document.getElementById('rv-note').value.trim();
+  if(!date||!amount){showToast('請填寫日期與金額');return;}
+  const[y,m]=date.split('-');
+  try{await addDoc(collection(db,'users',CU.uid,'revenue'),{date,orderNo,amount,note,year:+y,month:+m,createdAt:serverTimestamp()});closeModal('rv-modal');showToast('✓ 已儲存');loadRevenue();loadOverview();}
+  catch(e){showToast('儲存失敗：'+e.message);}
+};
+async function loadRevenue(){
+  const y=+document.getElementById('rv-year').value,m=+document.getElementById('rv-month').value;
+  const list=document.getElementById('rv-list');
+  list.innerHTML='<div class="loading"><div class="spin"></div>載入中…</div>';
+  try{
+    const q=query(collection(db,'users',CU.uid,'revenue'),where('year','==',y),where('month','==',m),orderBy('date','desc'));
+    const snap=await getDocs(q);let total=0;const days=new Set();let html='';
+    snap.forEach(d=>{const r=d.data();total+=r.amount||0;days.add(r.date);html+=`<div class="rc"><div class="rci ri-rev">💰</div><div class="rcb"><div class="rct">${r.orderNo||'無單號'}</div><div class="rcs">${r.note||r.date}</div></div><div class="rcr"><div class="rca">${fmt(r.amount)}</div><div class="rcd">${r.date}</div></div><button class="rdel" onclick="delRec('revenue','${d.id}')">刪</button></div>`;});
+    const wd=days.size,avg=wd>0?Math.round(total/wd):0;
+    document.getElementById('rv-total').textContent=fmt(total);
+    document.getElementById('rv-days').textContent=wd;
+    document.getElementById('rv-avg').textContent=fmt(avg);
+    document.getElementById('rv-count').textContent=snap.size;
+    list.innerHTML=html||'<div class="empty"><div class="empty-ico">📝</div><div>尚無記錄</div></div>';
+  }catch(e){list.innerHTML=`<div class="alert aer">${e.message}</div>`;}
+}
+window.loadRevenue=loadRevenue;
+
+// PURCHASE
+window.updatePurItems=()=>{
+  const type=document.getElementById('pu-type').value;
+  const sel=document.getElementById('pu-item-sel');
+  const list=type==='A'?PA:PB;
+  sel.innerHTML='<option value="">選擇項目</option>'+list.map(i=>`<option value="${i}">${i}</option>`).join('');
+  checkPurOther();
+};
+window.checkPurOther=()=>{document.getElementById('pu-other-grp').style.display=document.getElementById('pu-item-sel').value==='其他'?'block':'none';};
+window.savePurchase=async()=>{
+  const date=document.getElementById('pu-date').value;
+  const type=document.getElementById('pu-type').value;
+  let item=document.getElementById('pu-item-sel').value;
+  if(item==='其他')item=document.getElementById('pu-item-other').value.trim();
+  const amount=parseFloat(document.getElementById('pu-amt').value)||0;
+  const note=document.getElementById('pu-note').value.trim();
+  if(!date||!item||!amount){showToast('請填寫完整資訊');return;}
+  const[y,m]=date.split('-');
+  try{await addDoc(collection(db,'users',CU.uid,'purchase'),{date,type,item,amount,note,year:+y,month:+m,createdAt:serverTimestamp()});closeModal('pu-modal');showToast('✓ 已儲存');loadPurchase();}
+  catch(e){showToast('儲存失敗：'+e.message);}
+};
+async function loadPurchase(){
+  const y=+document.getElementById('pu-year').value,m=+document.getElementById('pu-month').value;
+  const ss=await getDoc(doc(db,'users',CU.uid,'stock',ym(y,m)));
+  const sd=ss.exists()?ss.data():{};
+  document.getElementById('prev-stock').value=sd.prevStock||'';
+  document.getElementById('curr-stock').value=sd.currStock||'';
+  const list=document.getElementById('pu-list');
+  list.innerHTML='<div class="loading"><div class="spin"></div>載入中…</div>';
+  try{
+    const q=query(collection(db,'users',CU.uid,'purchase'),where('year','==',y),where('month','==',m),orderBy('date','desc'));
+    const snap=await getDocs(q);let ta=0,tb=0,html='';
+    snap.forEach(d=>{const r=d.data();if(r.type==='A')ta+=r.amount||0;else tb+=r.amount||0;html+=`<div class="rc"><div class="rci ${r.type==='A'?'ri-pa':'ri-pb'}">${r.type==='A'?'🥬':'📦'}</div><div class="rcb"><div class="rct">${r.item}</div><div class="rcs"><span class="badge ${r.type==='A'?'ba':'bb'}">${r.type}${r.type==='A'?'食材':'耗材'}</span> ${r.note||''}</div></div><div class="rcr"><div class="rca">${fmt(r.amount)}</div><div class="rcd">${r.date}</div></div><button class="rdel" onclick="delRec('purchase','${d.id}')">刪</button></div>`;});
+    document.getElementById('pu-a').textContent=fmt(ta);
+    document.getElementById('pu-b').textContent=fmt(tb);
+    document.getElementById('pu-ab').textContent=fmt(ta+tb);
+    list.innerHTML=html||'<div class="empty"><div class="empty-ico">🛒</div><div>尚無記錄</div></div>';
+    calcFood();
+  }catch(e){list.innerHTML=`<div class="alert aer">${e.message}</div>`;}
+}
+window.loadPurchase=loadPurchase;
+window.calcFood=()=>{const a=parseFloat(document.getElementById('pu-a').textContent.replace(/[$,]/g,''))||0,p=parseFloat(document.getElementById('prev-stock').value)||0,c=parseFloat(document.getElementById('curr-stock').value)||0;document.getElementById('food-cost').textContent=fmt(a+p-c);};
+window.saveStock=async()=>{
+  const y=+document.getElementById('pu-year').value,m=+document.getElementById('pu-month').value;
+  const p=parseFloat(document.getElementById('prev-stock').value)||0,c=parseFloat(document.getElementById('curr-stock').value)||0;
+  try{await setDoc(doc(db,'users',CU.uid,'stock',ym(y,m)),{prevStock:p,currStock:c,year:y,month:m});showToast('✓ 庫存已儲存');calcFood();}
+  catch(e){showToast('儲存失敗：'+e.message);}
+};
+
+// VENDOR
+async function loadVendor(){
+  const y=+document.getElementById('vn-year').value,m=+document.getElementById('vn-month').value;
+  const el=document.getElementById('vn-content');el.innerHTML='<div class="loading"><div class="spin"></div>載入中…</div>';
+  try{
+    const q=query(collection(db,'users',CU.uid,'purchase'),where('year','==',y),where('month','==',m));
+    const snap=await getDocs(q);const va={},vb={};let ta=0,tb=0;
+    snap.forEach(d=>{const r=d.data();if(r.type==='A'){va[r.item]=(va[r.item]||0)+r.amount;ta+=r.amount;}else{vb[r.item]=(vb[r.item]||0)+r.amount;tb+=r.amount;}});
+    const rv=obj=>Object.entries(obj).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="dr"><span class="drl">${k}</span><span class="drv">${fmt(v)}</span></div>`).join('');
+    el.innerHTML=`<div class="card"><div class="vhd"><span>🥬 A 食材廠商</span><span>${fmt(ta)}</span></div>${Object.keys(va).length?rv(va):'<div class="empty" style="padding:16px"><div>尚無記錄</div></div>'}</div><div class="card"><div class="vhd"><span>📦 B 耗材廠商</span><span>${fmt(tb)}</span></div>${Object.keys(vb).length?rv(vb):'<div class="empty" style="padding:16px"><div>尚無記錄</div></div>'}</div><div class="stot"><div class="slbl">A + B 進貨總計</div><div class="sval">${fmt(ta+tb)}</div></div>`;
+  }catch(e){el.innerHTML=`<div class="alert aer">${e.message}</div>`;}
+}
+window.loadVendor=loadVendor;
+
+// STAFF
+window.saveStaff=async()=>{
+  const y=+document.getElementById('st-year').value,m=+document.getElementById('st-month').value;
+  const name=document.getElementById('st-name').value.trim();
+  const hourly=parseFloat(document.getElementById('st-hourly').value)||0;
+  const hours=parseFloat(document.getElementById('st-hours').value)||0;
+  if(!name||!hourly||!hours){showToast('請填寫完整資訊');return;}
+  try{await addDoc(collection(db,'users',CU.uid,'staff'),{name,hourly,hours,salary:hourly*hours,year:y,month:m,createdAt:serverTimestamp()});closeModal('st-modal');showToast('✓ 已儲存');loadStaff();}
+  catch(e){showToast('儲存失敗：'+e.message);}
+};
+async function loadStaff(){
+  const y=+document.getElementById('st-year').value,m=+document.getElementById('st-month').value;
+  const list=document.getElementById('st-list');list.innerHTML='<div class="loading"><div class="spin"></div>載入中…</div>';
+  try{
+    const q=query(collection(db,'users',CU.uid,'staff'),where('year','==',y),where('month','==',m),orderBy('createdAt','desc'));
+    const snap=await getDocs(q);let total=0,html='';
+    snap.forEach(d=>{const r=d.data();total+=r.salary||0;html+=`<div class="rc"><div class="rci ri-st">👤</div><div class="rcb"><div class="rct">${r.name}</div><div class="rcs">${fmt(r.hourly)}/hr × ${r.hours}hrs</div></div><div class="rcr"><div class="rca">${fmt(r.salary)}</div></div><button class="rdel" onclick="delRec('staff','${d.id}')">刪</button></div>`;});
+    document.getElementById('st-total').textContent=fmt(total);
+    list.innerHTML=html||'<div class="empty"><div class="empty-ico">👥</div><div>尚無員工</div></div>';
+  }catch(e){list.innerHTML=`<div class="alert aer">${e.message}</div>`;}
+}
+window.loadStaff=loadStaff;
+
+// EXPENSE
+window.addExpItem=()=>{expItems.push({key:'c_'+Date.now(),label:'',amount:0,isCustom:true});renderExpForm();};
+function renderExpForm(){
+  const y=+document.getElementById('ex-year').value,m=+document.getElementById('ex-month').value;
+  let h=`<div class="dr"><span class="drl">👥 人事薪資（自動）</span><span class="drv" id="ex-stf-d">計算中…</span></div>`;
+  EP.forEach(p=>{const it=expItems.find(i=>i.key===p.key)||{amount:0};h+=`<div class="fg"><label>${p.label} $</label><input type="number" value="${it.amount||''}" placeholder="0" inputmode="numeric" onchange="ueItem('${p.key}','${p.label}',this.value)"></div>`;});
+  expItems.filter(i=>i.isCustom).forEach(item=>{h+=`<div class="exp-row"><div class="fg"><label>項目名稱</label><input type="text" value="${item.label}" placeholder="項目名稱" onchange="ueLabel('${item.key}',this.value)"></div><div class="fg"><label>金額 $</label><input type="number" value="${item.amount||''}" placeholder="0" inputmode="numeric" onchange="ueItem('${item.key}',null,this.value)"></div><button class="exp-del" onclick="rmExp('${item.key}')">刪</button></div>`;});
+  document.getElementById('ex-items').innerHTML=h;
+  getStfTotal(y,m).then(t=>{const e=document.getElementById('ex-stf-d');if(e)e.textContent=fmt(t);});
+}
+window.ueItem=(k,l,v)=>{const i=expItems.findIndex(x=>x.key===k);if(i>=0){expItems[i].amount=parseFloat(v)||0;if(l)expItems[i].label=l;}else expItems.push({key:k,label:l||k,amount:parseFloat(v)||0});};
+window.ueLabel=(k,v)=>{const i=expItems.findIndex(x=>x.key===k);if(i>=0)expItems[i].label=v;};
+window.rmExp=(k)=>{expItems=expItems.filter(i=>i.key!==k);renderExpForm();};
+window.saveExpenses=async()=>{
+  const y=+document.getElementById('ex-year').value,m=+document.getElementById('ex-month').value;
+  try{await setDoc(doc(db,'users',CU.uid,'expenses',ym(y,m)),{items:expItems,year:y,month:m,updatedAt:serverTimestamp()});showToast('✓ 支出已儲存');loadExpense();}
+  catch(e){showToast('儲存失敗：'+e.message);}
+};
+async function loadExpense(){
+  const y=+document.getElementById('ex-year').value,m=+document.getElementById('ex-month').value;
+  const es=await getDoc(doc(db,'users',CU.uid,'expenses',ym(y,m)));
+  expItems=es.exists()?(es.data().items||[]):[];
+  EP.forEach(p=>{if(!expItems.find(i=>i.key===p.key))expItems.push({key:p.key,label:p.label,amount:0});});
+  renderExpForm();
+  const[rev,stf,purA]=await Promise.all([getRevTotal(y,m),getStfTotal(y,m),getPurA(y,m)]);
+  const ss=await getDoc(doc(db,'users',CU.uid,'stock',ym(y,m)));
+  const sd=ss.exists()?ss.data():{};
+  const fc=purA+(sd.prevStock||0)-(sd.currStock||0);
+  const oe=expItems.reduce((a,b)=>a+(b.amount||0),0);
+  const te=stf+fc+oe,net=rev-te;
+  document.getElementById('pl-rev').textContent=fmt(rev);
+  document.getElementById('pl-food').textContent=fmt(fc);
+  document.getElementById('pl-stf').textContent=fmt(stf);
+  let oh='';expItems.forEach(i=>{if(i.amount>0)oh+=`<div class="dr"><span class="drl">${i.label}</span><span class="drv">${fmt(i.amount)}</span></div>`;});
+  document.getElementById('pl-others').innerHTML=oh;
+  document.getElementById('pl-texp').textContent=fmt(te);
+  const ne=document.getElementById('pl-net');ne.textContent=fmt(net);ne.className='sval '+(net>=0?'pos':'neg');
+}
+window.loadExpense=loadExpense;
+
+// OVERVIEW
+async function loadOverview(){
+  const y=+document.getElementById('ov-year').value;
+  const el=document.getElementById('ov-content');el.innerHTML='<div class="loading"><div class="spin"></div>載入中…</div>';
+  try{
+    let html='',yt=0;
+    for(let m=1;m<=12;m++){
+      const[rev,stf,purA]=await Promise.all([getRevTotal(y,m),getStfTotal(y,m),getPurA(y,m)]);
+      const ss=await getDoc(doc(db,'users',CU.uid,'stock',ym(y,m)));const sd=ss.exists()?ss.data():{};
+      const fc=purA+(sd.prevStock||0)-(sd.currStock||0);
+      const es=await getDoc(doc(db,'users',CU.uid,'expenses',ym(y,m)));
+      const oe=(es.exists()?(es.data().items||[]):[]).reduce((a,b)=>a+(b.amount||0),0);
+      const net=rev-stf-fc-oe,cs=sd.currStock||0,combined=net+cs;yt+=rev;
+      if(rev>0||net!==0){html+=`<div class="omc" onclick="jumpM(${y},${m})"><div class="omct"><span class="omcm">${m}月</span><span class="omcr">${fmt(rev)}</span></div><div class="omcb"><span>實賺 ${fmt(net)}</span><span>庫存 ${fmt(cs)}</span><span class="omcc">合計 ${fmt(combined)}</span></div></div>`;}
+      else{html+=`<div class="omc" style="opacity:.4"><div class="omct"><span class="omcm">${m}月</span><span style="font-size:13px;color:var(--tl)">尚無資料</span></div></div>`;}
+    }
+    el.innerHTML=`<div class="stot" style="margin-bottom:16px"><div class="slbl">${y} 年度總營業額</div><div class="sval">${fmt(yt)}</div></div>${html}`;
+  }catch(e){el.innerHTML=`<div class="alert aer">${e.message}</div>`;}
+}
+window.loadOverview=loadOverview;
+window.jumpM=(y,m)=>{showPage('analysis');document.getElementById('an-year').value=y;document.getElementById('an-month').value=m;loadAnalysis();};
+
+// ANALYSIS
+async function loadAnalysis(){
+  const y=+document.getElementById('an-year').value,m=+document.getElementById('an-month').value;
+  const el=document.getElementById('an-content');el.innerHTML='<div class="loading"><div class="spin"></div>載入中…</div>';
+  try{
+    const[rev,stf,purA,purB]=await Promise.all([getRevTotal(y,m),getStfTotal(y,m),getPurA(y,m),(async()=>{const q=query(collection(db,'users',CU.uid,'purchase'),where('year','==',y),where('month','==',m),where('type','==','B'));const s=await getDocs(q);let t=0;s.forEach(d=>t+=d.data().amount||0);return t;})()]);
+    const ss=await getDoc(doc(db,'users',CU.uid,'stock',ym(y,m)));const sd=ss.exists()?ss.data():{};
+    const fc=purA+(sd.prevStock||0)-(sd.currStock||0);
+    const es=await getDoc(doc(db,'users',CU.uid,'expenses',ym(y,m)));
+    const oe=(es.exists()?(es.data().items||[]):[]).reduce((a,b)=>a+(b.amount||0),0);
+    const te=fc+stf+oe,net=rev-te;
+    const fr=rev>0?fc/rev*100:0,sr=rev>0?stf/rev*100:0,or=rev>0?oe/rev*100:0;
+    const bdg=(r,g,ok)=>r<=g?'<span class="badge bg">優良</span>':r<=ok?'<span class="badge bw">尚可</span>':'<span class="badge be">欠佳</span>';
+    const pc=(r,g,ok)=>r<=g?'po':r<=ok?'pw2':'pe';
+    const pm=m===1?12:m-1,py=m===1?y-1:y;
+    const pr=await getRevTotal(py,pm);
+    const gw=pr>0?((rev-pr)/pr*100).toFixed(1):null;
+    const gwH=gw!=null?`<span class="${parseFloat(gw)>=0?'up':'dn'}">${parseFloat(gw)>=0?'▲':'▼'}${Math.abs(gw)}% 較上月</span>`:'<span style="color:var(--tl)">無上月資料</span>';
+    const rq=query(collection(db,'users',CU.uid,'revenue'),where('year','==',y),where('month','==',m));
+    const rs=await getDocs(rq);const ds=new Set();rs.forEach(d=>ds.add(d.data().date));
+    const wd=ds.size,da=wd>0?Math.round(rev/wd):0;
+    el.innerHTML=`
+      <div class="sgrid">
+        <div class="sc"><div class="sl">月總營業額</div><div class="sv">${fmt(rev)}</div><div class="str">${gwH}</div></div>
+        <div class="sc"><div class="sl">月實賺金額</div><div class="sv" style="color:${net>=0?'var(--ok)':'var(--err)'}">${fmt(net)}</div></div>
+        <div class="sc"><div class="sl">日均營業額</div><div class="sv">${fmt(da)}</div></div>
+        <div class="sc"><div class="sl">工作天數</div><div class="sv">${wd}<span class="su">天</span></div></div>
+      </div>
+      <div class="card">
+        <div class="ctitle">成本佔比分析</div>
+        <div class="rit"><div class="rih"><span class="ril">🥬 食材消耗成本</span><div class="rir"><span class="rip">${fr.toFixed(1)}%</span>${bdg(fr,30,40)}</div></div><div class="pw"><div class="pb ${pc(fr,30,40)}" style="width:${Math.min(fr,100)}%"></div></div><div class="rihint">≤30% 優良 ｜ ≤40% 尚可 ｜ >40% 欠佳</div></div>
+        <div class="rit"><div class="rih"><span class="ril">👥 人事成本</span><div class="rir"><span class="rip">${sr.toFixed(1)}%</span>${bdg(sr,25,35)}</div></div><div class="pw"><div class="pb ${pc(sr,25,35)}" style="width:${Math.min(sr,100)}%"></div></div><div class="rihint">≤25% 優良 ｜ ≤35% 尚可 ｜ >35% 欠佳</div></div>
+        <div class="rit"><div class="rih"><span class="ril">📋 其他支出</span><span class="rip">${or.toFixed(1)}%</span></div><div class="pw"><div class="pb pw2" style="width:${Math.min(or,100)}%"></div></div></div>
+      </div>
+      <div class="card">
+        <div class="ctitle">損益明細</div>
+        <div class="dr"><span class="drl">總營業額</span><span class="drv">${fmt(rev)}</span></div>
+        <div class="dr"><span class="drl">食材消耗成本</span><span class="drv" style="color:var(--err)">${fmt(fc)}</span></div>
+        <div class="dr"><span class="drl">人事薪資</span><span class="drv" style="color:var(--err)">${fmt(stf)}</span></div>
+        <div class="dr"><span class="drl">其他支出</span><span class="drv" style="color:var(--err)">${fmt(oe)}</span></div>
+        <div class="stot"><div class="slbl">當月實賺金額</div><div class="sval ${net>=0?'pos':'neg'}">${fmt(net)}</div></div>
+      </div>
+      <div class="card">
+        <div class="ctitle">📢 營收狀況報告</div>
+        <div class="alert ${net>0?'aok':net<0?'aer':'awk'}">${net>0?`✅ 本月盈餘 ${fmt(net)}，食材佔比${fr.toFixed(1)}%，人事佔比${sr.toFixed(1)}%，整體營運${fr<=30&&sr<=25?'優良':'尚可'}。`:net<0?`⚠️ 本月虧損 ${fmt(Math.abs(net))}，請檢視支出結構。`:'本月收支平衡。'}</div>
+      </div>`;
+  }catch(e){el.innerHTML=`<div class="alert aer">${e.message}</div>`;}
+}
+window.loadAnalysis=loadAnalysis;
+
+// YEARLY
+function initYrTabs(){
+  const yr=yrs(),cy=new Date().getFullYear();
+  document.getElementById('yr-tabs').innerHTML=yr.map(y=>`<button class="ytab${y===cy?' active':''}" onclick="selYr(${y},this)">${y}年</button>`).join('');
+}
+window.selYr=(y,el)=>{document.querySelectorAll('.ytab').forEach(t=>t.classList.remove('active'));el.classList.add('active');loadYearly(y);};
+async function loadYearly(year){
+  const at=document.querySelector('.ytab.active');
+  const y=year||(at?+at.textContent:new Date().getFullYear());
+  const el=document.getElementById('yr-content');el.innerHTML='<div class="loading"><div class="spin"></div>載入中…</div>';
+  try{
+    const py=y-1,ms=Array.from({length:12},(_,i)=>i+1);
+    const[cur,prev]=await Promise.all([Promise.all(ms.map(m=>getRevTotal(y,m))),Promise.all(ms.map(m=>getRevTotal(py,m)))]);
+    const mv=Math.max(...cur,...prev,1);
+    const ct=cur.reduce((a,b)=>a+b,0),pt=prev.reduce((a,b)=>a+b,0);
+    const yg=pt>0?((ct-pt)/pt*100).toFixed(1):null;
+    let rows='';
+    ms.forEach((m,i)=>{
+      const g=prev[i]>0?((cur[i]-prev[i])/prev[i]*100).toFixed(1):null;
+      rows+=`<div class="rc" style="padding:12px 16px"><div class="rcb"><div class="rct">${m}月</div><div class="rcs">${py}年：${prev[i]>0?fmt(prev[i]):'-'}</div></div><div class="rcr"><div class="rca">${cur[i]>0?fmt(cur[i]):'-'}</div><div class="rcd">${g!=null?`<span class="${parseFloat(g)>=0?'up':'dn'}">${parseFloat(g)>=0?'▲':'▼'}${Math.abs(g)}%</span>`:'-'}</div></div></div>`;
+    });
+    el.innerHTML=`
+      <div class="card">
+        <div class="ctitle">${y} vs ${py} 趨勢</div>
+        <div style="display:flex;gap:10px;font-size:11px;margin-bottom:8px">
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:8px;background:var(--mt-500);border-radius:2px;display:inline-block"></span>${y}年</span>
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:8px;background:var(--mt-200);border-radius:2px;display:inline-block"></span>${py}年</span>
+        </div>
+        <div class="bchart">${ms.map((_,i)=>`<div class="bw"><div class="bar" style="background:var(--mt-200);height:${Math.round(prev[i]/mv*100)}%"></div><div class="bar" style="background:var(--mt-500);height:${Math.round(cur[i]/mv*100)}%"></div></div>`).join('')}</div>
+        <div class="blbls">${ms.map(m=>`<span>${m}</span>`).join('')}</div>
+      </div>
+      <div class="sgrid">
+        <div class="sc"><div class="sl">${y} 年度總計</div><div class="sv">${fmt(ct)}</div></div>
+        <div class="sc"><div class="sl">年度成長率</div><div class="sv" style="color:${yg&&parseFloat(yg)>=0?'var(--ok)':'var(--err)'}">${yg?(parseFloat(yg)>=0?'▲':'▼')+Math.abs(yg)+'%':'-'}</div></div>
+      </div>
+      <div class="ssep"><div class="ssep-line"></div><div class="ssep-text">月度明細</div><div class="ssep-line"></div></div>
+      <div class="rlist">${rows}</div>`;
+  }catch(e){el.innerHTML=`<div class="alert aer">${e.message}</div>`;}
+}
+window.loadYearly=loadYearly;
+
+// DELETE
+window.delRec=async(col,id)=>{
+  if(!confirm('確定刪除？'))return;
+  try{
+    await deleteDoc(doc(db,'users',CU.uid,col,id));showToast('✓ 已刪除');
+    if(col==='revenue')loadRevenue();else if(col==='purchase')loadPurchase();else if(col==='staff')loadStaff();
+  }catch(e){showToast('刪除失敗：'+e.message);}
+};
+</script>
+</body>
+</html>
